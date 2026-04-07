@@ -11,4 +11,4 @@ Welcome to my central security hub. This repository serves as a live documentati
 
 ---
 ### 🚩 Latest Writeup
-- [The Greenholt Phish (TryHackMe)](SOC/CTF-Labs-Writeups/Greenholt_Phish_Report.pdf) - Analysing Phishing Headers & Attachments.
+- [The Greenholt Phish - PDF Writeup](./CTF-Labs-Writeups/Greenholt_Phish_Report.pdf)
