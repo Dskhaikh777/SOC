@@ -1,6 +1,6 @@
 # Web Security Monitoring Module: TryHackMe
 
-# 🔍 SOC Incident Investigation Report: Web Security Monitoring
+# SOC Incident Investigation Report: Web Security Monitoring
 
 **Author:** Danish
 
@@ -10,15 +10,15 @@
 
 **Platform / Environment:** TryHackMe – Web Security Monitoring Lab
 
-## 📌 Executive Summary
+## Executive Summary
 
-This report documents three distinct security incident investigations conducted on web application infrastructures. The analysis combines **raw log analysis (Apache/Nginx access logs)**, **deep packet inspection (Wireshark PCAP analysis)**, and **SIEM log aggregation (Splunk)** to reconstruct attack chains, recover compromised credentials, detect web shell persistence, and analyze distributed denial-of-service (DDoS) traffic patterns.
+This report documents three distinct security incident investigations conducted on web application infrastructures. The analysis combines **raw log analysis (Apache/Nginx access logs)**, **deep packet inspection (Wireshark PCAP analysis)**, and **SIEM log aggregation (Splunk)** to reconstruct attack chains, recover compromised credentials, detect web shell persistence, and analyse distributed denial-of-service (DDoS) traffic patterns.
 
-## 📁 Investigation 1: TryBankMe Data Breach Investigation
+## Investigation 1: TryBankMe Data Breach Investigation
 
 ### 1. Incident Overview
 
-Management at **TryBankMe**, a web banking platform, reported a data breach involving leaked customer records. The objective was to analyze web access logs (`access.log`) and full packet captures (`traffic.pcap`) to identify the initial entry vector, recover compromised credentials, and verify data exfiltration.
+Management at **TryBankMe**, a web banking platform, reported a data breach involving leaked customer records. The objective was to analyse web access logs (`access.log`) and full packet captures (`traffic.pcap`) to identify the initial entry vector, recover compromised credentials, and verify data exfiltration.
 
 ### 2. Phase 1: Access Log Analysis (`access.log`)
 
@@ -84,11 +84,11 @@ DEBUG: SQL Query: SELECT id, username, email FROM users WHERE username LIKE '%' 
 | **Vulnerable Endpoint** | URI | `/account/changeusername.php?q=` |
 | **Exfiltrated Flag** | Token | `THM{dumped_the_db}` |
 
-## 📁 Investigation 2: WordPress Compromise & Web Shell Persistence
+## Investigation 2: WordPress Compromise & Web Shell Persistence
 
 ### 1. Incident Overview
 
-A WordPress web application exhibited signs of unauthorized administrative activity. Apache access logs (`/var/log/apache2/access.log`) were analyzed to determine the attack source, identified directory discovery, web shell placement, and post-exploitation commands.
+A WordPress web application exhibited signs of unauthorised administrative activity. Apache access logs (`/var/log/apache2/access.log`) were analysed to determine the attack source, identify directory discovery, web shell placement, and post-exploitation commands.
 
 ![image.png](image%205.png)
 
@@ -131,11 +131,11 @@ A WordPress web application exhibited signs of unauthorized administrative activ
 | **Staged Malware** | File | `linpeas.sh` |
 | **Upload Path** | Directory | `/wordpress/wp-content/uploads/` |
 
-## 📁 Investigation 3: Web Application DoS & Botnet DDoS Analysis
+## Investigation 3: Web Application DoS & Botnet DDoS Analysis
 
 ### 1. Part 1: Single-Source Denial of Service (DoS)
 
-Analyzing `/var/log/access.log` identified an ongoing Denial of Service attack against the authentication portal.
+Analysing `/var/log/access.log` identified an ongoing Denial of Service attack against the authentication portal.
 
 - **Attacker IP:** `203.12.23.195`
 - **Target Endpoint:** `GET /login`
@@ -147,7 +147,7 @@ Analyzing `/var/log/access.log` identified an ongoing Denial of Service attack a
 
 ### 2. Part 2: Distributed Denial of Service (DDoS) in Splunk SIEM
 
-To analyze a large-scale distributed attack, web access logs were ingested into Splunk SIEM (`[http://10.49.163.131:8000](http://10.49.163.131:8000)`, `index="main"`).
+To analyse a large-scale distributed attack, web access logs were ingested into Splunk SIEM (`[http://10.49.163.131:8000](http://10.49.163.131:8000)`, `index="main"`).
 
 #### **Search & Reporting Queries & Findings:**
 
@@ -179,13 +179,13 @@ To analyze a large-scale distributed attack, web access logs were ingested into 
         ![image.png](image%2012.png)
         
 
-## 🛡️ Recommended Mitigation & Defensive Remediation
+## Recommended Mitigation & Defensive Remediation
 
 1. **Web Application Firewall (WAF) Rules:**
     - Implement automated rate-limiting on sensitive endpoints (`/login`, `/search`, `/changeusername.php`).
     - Block known automated security scanner signatures (`FFUF`, `Hydra`, `sqlmap`, `ashadyagent/1.1`).
 2. **Input Sanitization & Secure Coding:**
-    - Convert dynamic SQL queries to parameterized statements / prepared queries to eliminate SQL injection vulnerabilities.
+    - Convert dynamic SQL queries to parameterised statements / prepared queries to eliminate SQL injection vulnerabilities.
 3. **Directory & File Upload Security:**
     - Disable PHP execution within media/upload directories (`/wp-content/uploads/`) using Apache `.htaccess` (`php_flag engine off`) or Nginx configuration blocks.
 4. **DDoS Protection & SIEM Alerting:**
