@@ -14,7 +14,7 @@ Attacker Machine (Red Team): Kali Linux: 192.168.41.135
 
 Target Machine (Blue Team): Windows 10 (Splunk Universal Forwarder, Sysmon): 192.168.239.131 (192.168.41.133)
 
-![download.png](download.png)
+![images/download.png](download.png)
 
 ### Tools and Technologies:
 
