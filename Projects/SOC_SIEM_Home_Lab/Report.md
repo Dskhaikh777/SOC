@@ -14,7 +14,7 @@ Attacker Machine (Red Team): Kali Linux: 192.168.41.135
 
 Target Machine (Blue Team): Windows 10 (Splunk Universal Forwarder, Sysmon): 192.168.239.131 (192.168.41.133)
 
-![images/download.png](download.png)
+![download.png](images/download.png)
 
 ### Tools and Technologies:
 
@@ -34,7 +34,7 @@ I launched a brute-force attack against the Windows 10 machine (192.168.41.133) 
 
 Command: **`crackmapexec smb 192.168.41.133 -u Administrator -p pass.txt`**
 
-![image.png](image.png)
+![image.png](images/image.png)
 
 **Detection & Analysis (Blue Team):**
 To detect the attack, I enabled the “Audit Logon Events (Failure)” security policy via the Local Security Policy (secpol.msc) UI on the target Windows machine. Then, the Universal Forwarder was used to collect the relevant logs and forward them to Splunk, where a custom search panel was created using the following query:
@@ -50,7 +50,7 @@ index=windows EventCode=4625
 
 I have created a search panel in Splunk that successfully detected the attacker’s IP address by analysing the failed logon attempts. Moreover, the account lockout was also properly detected, as seen in the `STATUS_ACCOUNT_LOCKED_OUT` event that occurred after 21 failed logon attempts.
 
-![image.png](image%201.png)
+![image.png](images/image%201.png)
 
 ### 2. Suspicious PowerShell / Outbound Network Connection (Reverse Shell)
 
@@ -60,9 +60,9 @@ I have created a search panel in Splunk that successfully detected the attacker�
 Set up a Netcat listener on the Kali Linux machine (Port `4444`). On the target Windows 10 machine, I executed a PowerShell command to initiate a network connection back to the attacker machine, mimicking a reverse shell payload.
 *Command (Windows):* `Test-NetConnection -ComputerName 192.168.41.135 -Port 4444`
 
-![image.png](image%202.png)
+![image.png](images/image%202.png)
 
-![image.png](image%203.png)
+![image.png](images/image%203.png)
 
 **Detection & Analysis (Blue Team):**
 Sysmon was configured (using SwiftOnSecurity rules) to log process network connections (Event ID 3). The Splunk universal forwarder was shipping the logs to the SIEM.
@@ -80,7 +80,7 @@ index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational*" "<Event
 | rename Process_Name as "Suspicious Process", Attacker_IP as "Attacker IP", Target_Port as "Port"
 ```
 
-![image.png](image%204.png)
+![image.png](images/image%204.png)
 
 ### 3. Network Enumeration / Port Scanning (Nmap)
 
@@ -91,7 +91,7 @@ index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational*" "<Event
 I have performed an attack by simulating an attacker performing network attack surface reconnaissance by conducting a TCP Connect scan (**-sT**) originating from the Kali Linux machine (**192.168.41.135**) against the Windows machine (**192.168.41.133**)
 *Command:* `nmap -sT -p 1-1000 -T4 192.168.41.133`
 
-![image.png](image%205.png)
+![image.png](images/image%205.png)
 
 **Detection & Analysis (Blue Team):**
 In order to detect and analyze the attack, Windows Filtering Platform (WFP) logs were leveraged to capture any connection events coming into the machine.
@@ -109,7 +109,7 @@ index=windows EventCode=5156 Source_Address="192.168.41.135"
 | rename Destination_Port as "Scanned Port", Source_Address as "Attacker IP", count as "Connection Attempts"
 ```
 
-![image.png](image%206.png)
+![image.png](images/image%206.png)
 
 ### **MITRE ATT&CK Mapping**
 
